@@ -26,7 +26,6 @@ A component-based e-commerce architecture built with React 18 and Material UI. T
 
 
 
-</n>
 💻 Technical Specifications
 1. State Management: Implements React useState hooks to manage global cart state and search filtering logic across a non-relational product array.
 
