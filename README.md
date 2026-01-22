@@ -12,10 +12,12 @@ A component-based e-commerce architecture built with React 18 and Material UI. T
 
 
 🛒CartPage
+
 <img width="881" height="689" alt="image" src="https://github.com/user-attachments/assets/131aa2b0-37da-4465-b36e-bb268cc1e298" />
 
 
 💳CheckOut
+
 <img width="829" height="684" alt="image" src="https://github.com/user-attachments/assets/5553a018-1a8f-4502-aedd-2adaf5e5ebcc" />
 
 
