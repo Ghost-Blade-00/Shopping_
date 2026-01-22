@@ -1,110 +1,93 @@
 import React, { useState } from 'react';
-import { 
-  AppBar, Toolbar, Container, Typography, Box, Button, Avatar, 
-  IconButton, Badge, TextField, InputAdornment, Menu, MenuItem, Divider, ListItemIcon 
-} from '@mui/material';
-import { Link } from 'react-router-dom';
+import { AppBar, Toolbar, Container, Typography, Box, Avatar, IconButton, Badge, TextField, InputAdornment, Menu, MenuItem, Divider, Switch, alpha } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
-import StorefrontIcon from '@mui/icons-material/Storefront';
 import SearchIcon from '@mui/icons-material/Search';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const Navbar = ({ cartCount, onSearchChange }) => {
+const Navbar = ({ cartCount, onSearchChange, toggleTheme, currentMode }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [profilePic, setProfilePic] = useState("https://i.pravatar.cc/100?img=12");
-  const open = Boolean(anchorEl);
-
-  const handleProfileClick = (event) => setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setProfilePic(reader.result);
-      reader.readAsDataURL(file);
-    }
-    handleClose();
-  };
+  const navigate = useNavigate();
 
   return (
-    <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: '1px solid #f4f0f0', bgcolor: 'white' }}>
-      <Container maxWidth="lg">
-        <Toolbar sx={{ justifyContent: 'space-between', gap: 2, height: 80 }}>
-          {/* Logo */}
-          <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}>
-            <StorefrontIcon sx={{ fontSize: 32, color: '#FF1E1E' }} />
-            <Typography variant="h5" sx={{ fontWeight: 900, color: '#181111', letterSpacing: '-1px' }}>ShopSmart</Typography>
+    <AppBar position="sticky" elevation={0} sx={{ 
+      borderBottom: '1px solid', borderColor: 'divider',
+      bgcolor: (theme) => alpha(theme.palette.background.paper, 0.75),
+      backdropFilter: 'blur(20px)', zIndex: 1100
+    }}>
+      <Container maxWidth={false} sx={{ px: { xs: 2, md: 6 } }}>
+        <Toolbar sx={{ justifyContent: 'space-between', height: 85 }}>
+          <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', gap: 2, textDecoration: 'none' }}>
+            <Box sx={{ width: 40, height: 40, bgcolor: 'text.primary', borderRadius: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography sx={{ color: 'background.paper', fontWeight: 900, fontSize: '1.2rem' }}>S</Typography>
+            </Box>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>ShopSmart</Typography>
           </Box>
 
-          {/* Search */}
-          <Box sx={{ flexGrow: 1, maxWidth: 400 }}>
+          <Box sx={{ flexGrow: 1, maxWidth: 450, mx: 4 }}>
             <TextField
-              fullWidth
-              size="small"
-              placeholder="Search products..."
-              onChange={(e) => onSearchChange(e.target.value)}
-              InputProps={{
-                startAdornment: (<InputAdornment position="start"><SearchIcon color="action" /></InputAdornment>),
-                sx: { borderRadius: 50, bgcolor: '#f5f5f5', "& fieldset": { border: "none" } }
+              fullWidth placeholder="Search products..."
+              autoComplete="off"
+              onChange={(e) => { 
+                onSearchChange(e.target.value); 
+                if(e.target.value.trim().length > 0) navigate('/search'); 
+              }}
+              sx={{ 
+                '& .MuiOutlinedInput-root': { 
+                  '& fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': { border: 'none' },
+                },
+                // REMOVES BLUE AUTOFILL AND FOCUS BOX
+                '& input:-webkit-autofill': {
+                  WebkitBoxShadow: (theme) => `0 0 0 1000px ${theme.palette.action.hover} inset !important`,
+                  WebkitTextFillColor: (theme) => `${theme.palette.text.primary} !important`,
+                  transition: 'background-color 5000s ease-in-out 0s',
+                },
+                '& input:focus': { outline: 'none', boxShadow: 'none' }
+              }}
+              InputProps={{ 
+                startAdornment: (<InputAdornment position="start"><SearchIcon sx={{ color: 'text.secondary' }} /></InputAdornment>), 
+                sx: { borderRadius: 50, bgcolor: 'action.hover', height: 45, color: 'text.primary' } 
               }}
             />
           </Box>
 
-          {/* Actions */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <IconButton component={Link} to="/cart">
-              <Badge badgeContent={cartCount} color="error">
-                <ShoppingBagOutlinedIcon />
-              </Badge>
+              <Badge badgeContent={cartCount} color="error"><ShoppingBagOutlinedIcon sx={{ color: 'text.primary' }} /></Badge>
             </IconButton>
-
-            {/* Profile Avatar Trigger */}
-            <IconButton onClick={handleProfileClick} sx={{ p: 0, ml: 1 }}>
-              <Avatar src={profilePic} sx={{ width: 40, height: 40, border: '2px solid #f0f0f0' }} />
-            </IconButton>
-
-            {/* Profile Menu */}
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: 'visible',
-                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
-                  mt: 1.5,
-                  borderRadius: 3,
-                  minWidth: 200,
-                  '&:before': {
-                    content: '""', display: 'block', position: 'absolute',
-                    top: 0, right: 14, width: 10, height: 10,
-                    bgcolor: 'background.paper', transform: 'translateY(-50%) rotate(45deg)', zIndex: 0,
-                  },
-                },
-              }}
-            > 
-              <MenuItem component="label" sx={{ py: 1.5 }}>
-                <ListItemIcon><PhotoCameraIcon fontSize="small" /></ListItemIcon>
-                Upload Photo
-                <input type="file" hidden accept="image/*" onChange={handleFileUpload} />
+            
+            <Avatar 
+              onClick={(e) => setAnchorEl(e.currentTarget)} 
+              src="https://i.pravatar.cc/100?img=12" 
+              sx={{ width: 40, height: 40, cursor: 'pointer', border: '1px solid', borderColor: 'divider' }} 
+            />
+            
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} PaperProps={{ 
+                sx: { mt: 1.5, minWidth: 220, borderRadius: 4, bgcolor: (theme) => alpha(theme.palette.background.paper, 0.8), backdropFilter: 'blur(10px)' } 
+            }}>
+              <MenuItem sx={{ py: 1.5 }}>
+                <PersonOutlineIcon sx={{ mr: 2, fontSize: 20 }} />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>My Profile</Typography>
               </MenuItem>
               
-              <Divider sx={{ my: 1 }} />
-              
-              <MenuItem component={Link} to="/about" onClick={handleClose}>
-                <ListItemIcon><InfoOutlinedIcon fontSize="small" /></ListItemIcon>
-                About Us
+              <MenuItem component={Link} to="/support" onClick={() => setAnchorEl(null)} sx={{ py: 1.5 }}>
+                <HelpOutlineIcon sx={{ mr: 2, fontSize: 20 }} />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>Support Page</Typography>
+              </MenuItem>
+
+              <MenuItem sx={{ justifyContent: 'space-between', py: 1.5 }}>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>Dark Mode</Typography>
+                <Switch checked={currentMode === 'dark'} onChange={toggleTheme} size="small" />
               </MenuItem>
               
-              <MenuItem component={Link} to="/support" onClick={handleClose}>
-                <ListItemIcon><SupportAgentIcon fontSize="small" /></ListItemIcon>
-                Customer Care
+              <Divider />
+              
+              <MenuItem onClick={() => setAnchorEl(null)} sx={{ py: 1.5, color: 'error.main' }}>
+                <LogoutIcon sx={{ mr: 2, fontSize: 20 }} />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>Logout</Typography>
               </MenuItem>
             </Menu>
           </Box>
